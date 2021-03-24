@@ -21,10 +21,14 @@ clean:
 
 binding: deps
 	mkdir -p $(BINDING_OUTPUT)
+ifeq ($(BUILD_MODE), )
+	go build -ldflags="-w -s" -o $(BINDING_OUTPUT)/$(BINDING_FILE) $(BINDING_ARGS) binding/main.go
+else
 	go build -ldflags="-w -s" -o $(BINDING_OUTPUT)/$(BINDING_FILE) -buildmode=$(BUILD_MODE) $(BINDING_ARGS) binding/main.go
+endif
 
 #include Makefile.android
-#include Makefile.ios
+include Makefile.ios
 include Makefile.darwin
 #include Makefile.linux
 #include Makefile.windows
