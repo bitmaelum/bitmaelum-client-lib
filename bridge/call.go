@@ -2,7 +2,6 @@ package bitmaelumClientBridge
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/bitmaelum/bitmaelum-suite/pkg/vault"
 )
@@ -16,7 +15,10 @@ func Call(name string, payload []byte) ([]byte, error) {
 	case "openVault":
 		output = instance.openVault(payload)
 	default:
-		return nil, fmt.Errorf("not implemented: %s", name)
+		return json.Marshal(map[string]interface{}{
+			"error":    "not implemented",
+			"response": nil,
+		})
 	}
 
 	return json.Marshal(output)
