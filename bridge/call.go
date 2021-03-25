@@ -3,7 +3,7 @@ package bitmaelumClientBridge
 import (
 	"encoding/json"
 
-	"github.com/bitmaelum/bitmaelum-suite/pkg/vault"
+	bitmaelumClient "github.com/bitmaelum/bitmaelum-client-lib/bitmaelum"
 )
 
 // Call ...
@@ -25,47 +25,13 @@ func Call(name string, payload []byte) ([]byte, error) {
 }
 
 type instance struct {
+	instance *bitmaelumClient.BitMaelumClient
 }
 
 func NewInstance() *instance {
-	return &instance{}
+	return &instance{instance: bitmaelumClient.NewBitMaelumClient()}
 }
 
 func (m instance) openVault(payload []byte) map[string]interface{} {
-	var arguments map[string]string
-
-	err := json.Unmarshal(payload, &arguments)
-	if err != nil {
-		return map[string]interface{}{
-			"error":    "failed to decode arguments",
-			"response": nil,
-		}
-	}
-
-	v, err := vault.Open(arguments["path"], arguments["password"])
-	if err != nil {
-		return map[string]interface{}{
-			"error":    "error opening vault, check your password",
-			"response": nil,
-		}
-	}
-
-	result := make([]map[string]interface{}, len(v.Store.Accounts))
-
-	for i, acc := range v.Store.Accounts {
-		pk := acc.GetActiveKey().PrivKey
-		privkey := pk.String()
-
-		result[i] = map[string]interface{}{
-			"address":     acc.Address.String(),
-			"hash":        acc.Address.Hash().String(),
-			"name":        acc.Name,
-			"private_key": privkey,
-		}
-	}
-
-	return map[string]interface{}{
-		"error":    nil,
-		"response": result,
-	}
+	return m.instance.OpenVault(payload)
 }
