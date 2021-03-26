@@ -27,7 +27,7 @@ else
 	go build -ldflags="-w -s" -o $(BINDING_OUTPUT)/$(BINDING_FILE) -buildmode=$(BUILD_MODE) $(BINDING_ARGS) binding/main.go
 endif
 
-#include Makefile.android
+include Makefile.android
 include Makefile.ios
 include Makefile.darwin
 #include Makefile.linux

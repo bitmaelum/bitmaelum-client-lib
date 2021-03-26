@@ -33,5 +33,26 @@ func NewInstance() *instance {
 }
 
 func (m instance) openVault(payload []byte) map[string]interface{} {
-	return m.instance.OpenVault(payload)
+	var arguments map[string]string
+
+	err := json.Unmarshal(payload, &arguments)
+	if err != nil {
+		return map[string]interface{}{
+			"error":    "failed to decode arguments",
+			"response": nil,
+		}
+	}
+
+	v, err := m.instance.OpenVault(arguments["path"], arguments["password"])
+	if err != nil {
+		return map[string]interface{}{
+			"error":    err.Error(),
+			"response": nil,
+		}
+	}
+
+	return map[string]interface{}{
+		"error":    nil,
+		"response": v,
+	}
 }

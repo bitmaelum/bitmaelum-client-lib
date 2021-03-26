@@ -1,6 +1,6 @@
-ANDROID_HOME?=$(HOME)/Android/Sdk
-ANDROID_NDK_HOME?=$(ANDROID_HOME)/ndk/21.3.6528147
-ANDROID_NDK_TOOLCHAIN?=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/linux-x86_64/bin
+ANDROID_HOME?=$(HOME)/Library/Android/sdk
+ANDROID_NDK_HOME?=$(ANDROID_HOME)/ndk-bundle
+ANDROID_NDK_TOOLCHAIN?=$(ANDROID_NDK_HOME)/toolchains/llvm/prebuilt/darwin-x86_64/bin
 ANDROID_OUTPUT?=android/jniLibs
 ANDROID_BINDING_NAME?=$(BINDING_NAME).so
 
