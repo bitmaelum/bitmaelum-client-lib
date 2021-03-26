@@ -3,7 +3,7 @@ package bitmaelumClientBridge
 import (
 	"encoding/json"
 
-	bitmaelumClient "github.com/bitmaelum/bitmaelum-client-lib/bitmaelum"
+	bitmaelumClient "github.com/bitmaelum/bitmaelum-suite/library"
 )
 
 // Call ...
@@ -14,6 +14,8 @@ func Call(name string, payload []byte) ([]byte, error) {
 	switch name {
 	case "openVault":
 		output = instance.openVault(payload)
+	case "sendSimpleMessage":
+		output = instance.sendSimpleMessage(payload)
 	default:
 		return json.Marshal(map[string]interface{}{
 			"error":    "not implemented",
@@ -54,5 +56,27 @@ func (m instance) openVault(payload []byte) map[string]interface{} {
 	return map[string]interface{}{
 		"error":    nil,
 		"response": v,
+	}
+}
+
+func (m instance) sendSimpleMessage(payload []byte) map[string]interface{} {
+	var arguments map[string]string
+
+	err := json.Unmarshal(payload, &arguments)
+	if err != nil {
+		return map[string]interface{}{
+			"error": "failed to decode arguments",
+		}
+	}
+
+	err = m.instance.SendSimpleMessage(arguments["account"], arguments["name"], arguments["recipient"], arguments["private_key"], arguments["subject"], arguments["body"])
+	if err != nil {
+		return map[string]interface{}{
+			"error": err.Error(),
+		}
+	}
+
+	return map[string]interface{}{
+		"error": nil,
 	}
 }
