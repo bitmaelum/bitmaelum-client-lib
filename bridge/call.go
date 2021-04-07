@@ -2,7 +2,6 @@ package bitmaelumClientBridge
 
 import (
 	"encoding/json"
-	"reflect"
 	"sync"
 
 	bitmaelumClient "github.com/bitmaelum/bitmaelum-suite/library"
@@ -32,8 +31,8 @@ func GetInstance() *instance {
 }
 
 // Call ...
-func CallOld(name string, payload []byte) ([]byte, error) {
-	instance := NewInstance()
+func Call(name string, payload []byte) ([]byte, error) {
+	instance := GetInstance()
 
 	var output map[string]interface{}
 	switch name {
@@ -55,30 +54,6 @@ func CallOld(name string, payload []byte) ([]byte, error) {
 	}
 
 	return json.Marshal(output)
-}
-
-func Call(funcName string, payload []byte) ([]byte, error) {
-
-	Functions := map[string]interface{}{
-		"openVault":               GetInstance().openVault,
-		"sendSimpleMessage":       GetInstance().sendSimpleMessage,
-		"setClientFromVault":      GetInstance().setClientFromVault,
-		"setClientFromMnemonic":   GetInstance().setClientFromMnemonic,
-		"setClientFromPrivateKey": GetInstance().setClientFromPrivateKey,
-	}
-
-	f := reflect.ValueOf(Functions[funcName])
-	if f == reflect.Zero(reflect.TypeOf(nil)) {
-		return json.Marshal(map[string]interface{}{
-			"error":    "not implemented",
-			"response": nil,
-		})
-	}
-
-	args := make([]reflect.Value, 1)
-	args[0] = reflect.ValueOf(payload)
-	res := f.Call(args)
-	return res[0].Interface().([]byte), res[1].Interface().(error)
 }
 
 func (m instance) openVault(payload []byte) map[string]interface{} {
